@@ -49,3 +49,9 @@
             cv2.imwrite('crop' + '.jpg', new_img)
     #cv2.imwrite("im.jpg",image)
     cv2.waitKey(0)
+    from PIL import Image, ImageEnhance 
+    enh1 = Image.open(r'C:\Users\Sid\Downloads\cancercells\crop.jpg')
+    enh2 = ImageEnhance.Sharpness(enh1)
+    enh_img = enh2.enhance(5.0)
+    enh_img.save("enh.jpg")
+    
