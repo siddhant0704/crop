@@ -1,0 +1,51 @@
+############## WORKING CODE#######################
+    
+    import numpy as np
+    import cv2
+    import matplotlib.pyplot as plt
+    %matplotlib inline
+    
+    im=cv2.imread(r'C:\Users\Sid\Downloads\IMG_1107\IMG_1154.jpg')
+    img=cv2.resize(im,(1000,1000))
+    modimg=img.copy()
+    
+    #img = cv2.fastNlMeansDenoisingColored(im,None,10,10,7,21)
+    grayImage = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # blur the image to remove high frequency noise 
+    # it helps in finding/detecting contour in gray image
+    grayImageBlur = cv2.blur(grayImage,(3,3))
+    # then we performed canny edge detection
+    edgedImage = cv2.Canny(grayImageBlur, 100, 300, 3)
+    #blur = cv2.GaussianBlur(img,(5,5),0)
+    ret3,th3 = cv2.threshold(edgedImage,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+    plt.figure(figsize=(15,5))
+    images = [blur, 0, th3]
+    titles = ['Gaussian filtered Image','Histogram',"Otsu's Thresholding"]
+    
+    
+    
+    #plt.subplot(1,3,1),plt.imshow(images[0],'gray')
+   # plt.title(titles[0]), plt.xticks([]), plt.yticks([])
+    
+   # plt.subplot(1,3,2),plt.hist(images[0].ravel(),256)
+    #plt.title(titles[1]), plt.xticks([]), plt.yticks([])
+   
+
+
+    #plt.subplot(1,3,3),plt.imshow(images[2],'gray')
+   # plt.title(titles[2]), plt.xticks([]), plt.yticks([])
+    contours, hierarchy = cv2.findContours(th3, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    img = cv2.drawContours(images[2], contours, -1, (255,255,255), 3)
+    
+    plt.figure(figsize=(10,10))
+    plt.subplot(1,2,2),plt.title('FindContours'),plt.imshow(images[2],'gray')#,'red')
+    
+    idx = 0
+    for c in contours:
+        x,y,w,h = cv2.boundingRect(c)
+        if w>50 and h>50:
+            idx+=1
+            new_img=modimg[y:y+h,x:x+w]
+            cv2.imwrite('crop' + '.jpg', new_img)
+    #cv2.imwrite("im.jpg",image)
+    cv2.waitKey(0)
